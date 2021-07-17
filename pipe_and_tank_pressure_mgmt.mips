@@ -1,0 +1,32 @@
+alias co2tank d0
+alias pump d1
+
+alias pressure r0
+
+# max pressure of 30Mpa
+move r10 30000
+alias maxPressure r10
+# min pressure of 25Mpa
+move r11 25000
+alias minPressure r11
+
+loop:
+
+assessPressure:
+# load pressure into register
+l pressure co2tank Pressure
+# display pressure on device base
+s db Setting pressure
+bgt pressure maxPressure startPump
+blt pressure minPressure stopPump
+j assessPressure
+
+startPump:
+s pump On 1
+j assessPressure
+
+stopPump:
+s pump On 0
+
+yield
+j loop

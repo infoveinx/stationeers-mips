@@ -1,0 +1,44 @@
+alias tempSensor d0
+alias cooler1 d1
+alias heater1 d2
+
+alias temperature r0
+
+# cooling temp 22 celsius
+move r10 22
+alias coolTempC r10
+# heating temp 21 celsius
+move r11 21
+alias heatTempC r11
+
+alias coolTempK r1
+alias heatTempK r2
+
+# convert celsius to kelvin
+add coolTempK 273.15 coolTempC
+add heatTempK 273.15 heatTempC
+
+loop:
+
+jal inputLoop
+blt temperature coolTempK assessHeat
+s cooler1 On 1
+assessHeat:
+bgt temperature heatTempK assessFinished
+s heater1 On 1
+assessFinished:
+
+jal inputLoop
+bgt temperature coolTempK disableHeat
+s cooler1 On 0
+disableHeat:
+blt temperature heatTempK disableFinished
+s heater1 On 0
+disableFinished:
+yield
+j loop
+
+inputLoop:
+l temperature tempSensor Temperature
+s db Setting temperature
+j ra
